@@ -73,8 +73,8 @@ daily_stop = daily_group.command('stop', aliases={"st"}, permission=SUPERUSER)
 async def _init_db():
     global db, db_name
     try:
-        if hasattr(cfg, 'db_name'):
-            db_name = cfg.db_name  # 数据库名字
+        if hasattr(cfg, 'daily_task_db_name'):
+            db_name = cfg.daily_task_db_name  # 数据库名字
             base_dir = Path(__file__).parent  # 当前插件路径
             db_path = base_dir / f'{db_name}.json'
             db = TinyDB(db_path)  # 创建/加载数据库
@@ -337,7 +337,7 @@ async def query_today_task_status(user_id: str):
     """
     查询指定user的今日任务完成状况
     """
-    bot = nonebot.get_bot(str(cfg.bot_id))
+    bot = nonebot.get_bot(str(cfg.daily_task_bot_id))
     user_info = await bot.call_api('get_stranger_info', user_id=user_id)
     today = datetime.date.today().isoformat()
     if user_id:  # 如果更新指定user, 向user发送消息
