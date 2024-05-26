@@ -96,7 +96,7 @@ _✨ NoneBot 每日任务插件 ✨_
 |   daily_task_priority    | int  |  10   | 每日任务提醒优先级  |
 |    daily_task_enabled    | bool | False | 是否启用每日任务提醒 |
 
-## 🎉 使用
+## 🎉 使用nonebot-plugin-daily-task
 
 ### 指令表
 
