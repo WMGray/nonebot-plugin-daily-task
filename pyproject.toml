@@ -1,19 +1,19 @@
-[tool.poetry]
-name = "nonebot-plugin-daily-task"
+[project]
+name = "nonebot_plugin_daily_task"
 version = "0.1.0"
-description = "适用于NoneBot2的每日任务提醒插件"
-authors = ["WMGray"]
-license = "MIT"
+description = "适用于Nonebot2的每日任务提醒插件"
+authors = [
+    { name = "WMGray", email = "1466787434@qq.com" },
+]
+dependencies = []
+requires-python = ">=3.10"
 readme = "README.md"
+license = { text = "MIT" }
 
-[tool.poetry.dependencies]
-python = "^3.10"
-nonebot-plugin-apscheduler = "0.4.0"
-tinydb = "4.8.0"
-nonebot2 = "2.3.0"
-nonebot-adapter-onebot = "2.4.3"
 
+[tool.pdm]
+distribution = true
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
