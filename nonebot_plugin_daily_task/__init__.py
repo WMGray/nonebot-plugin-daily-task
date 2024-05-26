@@ -38,7 +38,6 @@ __plugin_meta__ = PluginMetadata(
 
 # 加载插件配置
 cfg = get_plugin_config(Config)
-bot_id = nonebot.get_driver().config.bot_id
 driver = get_driver()
 db = None
 
@@ -338,7 +337,7 @@ async def query_today_task_status(user_id: str):
     """
     查询指定user的今日任务完成状况
     """
-    bot = nonebot.get_bot(str(bot_id))
+    bot = nonebot.get_bot(str(cfg.bot_id))
     user_info = await bot.call_api('get_stranger_info', user_id=user_id)
     today = datetime.date.today().isoformat()
     if user_id:  # 如果更新指定user, 向user发送消息

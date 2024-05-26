@@ -70,67 +70,47 @@ _✨ NoneBot 每日任务插件 ✨_
 
 ## 💿 安装
 
-<details open>
 <summary>使用 nb-cli 安装</summary>
-在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
 
-    nb plugin install nonebot-plugin-template
+    nb plugin install nonebot-plugin-daily-task
 
-</details>
-
-<details>
-<summary>使用包管理器安装</summary>
-在 nonebot2 项目的插件目录下, 打开命令行, 根据你使用的包管理器, 输入相应的安装命令
-
-<details>
 <summary>pip</summary>
 
-    pip install nonebot-plugin-template
-
-</details>
-<details>
-<summary>pdm</summary>
-
-    pdm add nonebot-plugin-template
-
-</details>
-<details>
-<summary>poetry</summary>
-
-    poetry add nonebot-plugin-template
-
-</details>
-<details>
-<summary>conda</summary>
-
-    conda install nonebot-plugin-template
-
-</details>
+    pip install nonebot-plugin-daily-task
 
 打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
 
-    plugins = ["nonebot_plugin_template"]
-
-</details>
+    plugins = ["nonebot_plugin_daily_task"]
 
 ## ⚙️ 配置
 
-在 nonebot2 项目的`.env`文件中添加下表中的必填配置
+在 插件 的`config.py`文件中修改下表中的配置
 
-| 配置项  | 必填 | 默认值 |  说明  |
-|:----:|:--:|:---:|:----:|
-| 配置项1 | 是  |  无  | 配置说明 |
-| 配置项2 | 否  |  无  | 配置说明 |
+|           配置项            |  类型  |  默认值  |     说明     |
+|:------------------------:|:----:|:-----:|:----------:|
+|    daily_task_bot_id     | str  |   无   |   Bot QQ   |
+|    daily_task_db_name    | str  | daily |   数据库名称    |
+|  daily_task_start_hour   | int  |  10   | 每日任务提醒开始时间 |
+|   daily_task_end_hour    | int  |  23   | 每日任务提醒结束时间 |
+| daily_task_interval_hour | int  |   2   | 每日任务提醒间隔时间 |
+|   daily_task_priority    | int  |  10   | 每日任务提醒优先级  |
+|    daily_task_enabled    | bool | False | 是否启用每日任务提醒 |
 
 ## 🎉 使用
 
 ### 指令表
 
-| 指令  | 权限 | 需要@ | 范围 |  说明  |
-|:---:|:--:|:---:|:--:|:----:|
-| 指令1 | 主人 |  否  | 私聊 | 指令说明 |
-| 指令2 | 群员 |  是  | 群聊 | 指令说明 |
+|       指令       |    功能    |    权限     |
+|:--------------:|:--------:|:---------:|
+|     daily      |   插件简介   |    所有人    |
+|  daily.help/h  | 查看插件帮助信息 |    所有人    |
+|  daily.add/a   |  添加每日任务  |    所有人    |
+|  daily.del/d   |  删除每日任务  |    所有人    |
+| daily.modify/m |  修改每日任务  |    所有人    |
+| daily.query/q  |  查询每日任务  |    所有人    |
+| daily.finish/f |  完成每日任务  |    所有人    |
+| daily.start/s  |  启用每日任务  | SUPERUSER |
+| daily.stop/st  |  停用每日任务  | SUPERUSER |
 
 ### 效果图
 
-如果有效果图的话
