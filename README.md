@@ -11,10 +11,11 @@ _✨ NoneBot 每日任务插件 ✨_
 
 
 <a href="https://github.com/WMGray/nonebot-plugin-daily-task/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/owner/nonebot-plugin-template.svg" alt="license">
+    <img src="https://img.shields.io/github/license/WMGray/nonebot-plugin-daily-task
+" alt="license">
 </a>
 <a href="https://pypi.org/project/nonebot-plugin-daily-task/">
-    <img src="https://img.shields.io/pypi/v/nonebot-plugin-template.svg" alt="pypi">
+    <img src="https://img.shields.io/pypi/v/nonebot-plugin-daily-task" alt="pypi">
 </a>
 <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="python">
 
@@ -63,6 +64,4 @@ _✨ NoneBot 每日任务插件 ✨_
 | daily.finish/f |  完成每日任务  |    所有人    |
 | daily.start/s  |  启用每日任务  | SUPERUSER |
 | daily.stop/st  |  停用每日任务  | SUPERUSER |
-
-### 效果图
 
