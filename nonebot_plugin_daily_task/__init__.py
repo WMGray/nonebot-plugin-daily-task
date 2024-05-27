@@ -145,7 +145,7 @@ async def add_task(event: Event, args: Message = CommandArg()):
                               .format(user_id, job, start_date))
         await daily_add.send(msg)
         # 更新‘Status’数据库
-        await update_status_add(user_id=user_id)
+        await update_status_add(uid=user_id)
     else:
         await daily_add.finish("请在命令后加上要添加的任务..")
 
