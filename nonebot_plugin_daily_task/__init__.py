@@ -27,7 +27,7 @@ __plugin_meta__ = PluginMetadata(
     description="这个插件可以帮助用户管理每日任务，包括添加任务、完成任务、查询任务等功能。",
     usage="帮助 daily.h daily.help",
     type="application",
-    homepage="{项目主页}",
+    homepage="https://github.com/WMGray/nonebot-plugin-daily-task/",
     # 发布必填。
     config=Config,
     # 插件配置项类，如无需配置可不填写。
