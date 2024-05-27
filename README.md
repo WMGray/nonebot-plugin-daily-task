@@ -11,8 +11,7 @@ _✨ NoneBot 每日任务插件 ✨_
 
 
 <a href="https://github.com/WMGray/nonebot-plugin-daily-task/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/WMGray/nonebot-plugin-daily-task
-" alt="license">
+    <img src="https://img.shields.io/github/license/WMGray/nonebot-plugin-daily-task" alt="license">
 </a>
 <a href="https://pypi.org/project/nonebot-plugin-daily-task/">
     <img src="https://img.shields.io/pypi/v/nonebot-plugin-daily-task" alt="pypi">
