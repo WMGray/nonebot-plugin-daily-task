@@ -116,6 +116,8 @@ async def handle_daily_command():
                                   "完成任务: daily.finish/f\n"
                                   "修改任务: daily.modify/m\n"
                                   "查询任务: daily.query/q status/task\n"
+                                  "启用插件: daily.start/s\n"
+                                  "停用插件: daily.stop/st\n"
                                   "帮助: daily.help/h")
     await daily_help.finish(message=message)
 
