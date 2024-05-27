@@ -8,7 +8,7 @@ class Config(BaseModel):
     daily_task_end_hour: int = 23
     daily_task_interval_hour: int = 2
     daily_task_priority: int = 10
-    weather_plugin_enabled: bool = False
+    daily_task_enabled: bool = False
 
     @field_validator("daily_task_priority")
     @classmethod

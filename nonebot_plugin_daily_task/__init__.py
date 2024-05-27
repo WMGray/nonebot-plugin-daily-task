@@ -43,7 +43,7 @@ db = None
 
 
 async def is_enable() -> bool:
-    return cfg.weather_plugin_enabled
+    return cfg.daily_task_enabled
 
 
 # 配置响应器组
@@ -368,7 +368,7 @@ async def query_user_tasks(user_id: str):
 @daily_start.handle()
 async def start_task(event: Event):
     """启动定时任务"""
-    cfg.weather_plugin_enabled = True
+    cfg.daily_task_enabled = True
     await _init_db()
     start_h, end_h = cfg.daily_task_start_hour, cfg.daily_task_end_hour
     interval_h = cfg.daily_task_interval_hour
@@ -390,6 +390,6 @@ async def start_task(event: Event):
 @daily_stop.handle()
 async def stop_task(event: Event):
     """停止定时任务"""
-    cfg.weather_plugin_enabled = False
+    cfg.daily_task_enabled = False
     scheduler.remove_all_jobs()
     await daily_stop.finish("定时任务已停止")
