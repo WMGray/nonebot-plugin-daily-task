@@ -1,7 +1,7 @@
 [project]
 name = "nonebot_plugin_daily_task"
-version = "0.1.7"
-description = "适用于Nonebot2的每日任务提醒插件"
+version = "0.1.8"
+description = "Default template for PDM package"
 authors = [
     { name = "WMGray", email = "1466787434@qq.com" },
 ]
@@ -19,4 +19,4 @@ license = { text = "MIT" }
 
 
 [tool.pdm]
-distribution = false
+distribution = true

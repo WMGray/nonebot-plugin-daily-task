@@ -86,7 +86,7 @@ async def _init_db():
     except OSError as e:
         logger.error(f"ERROR: Failed to load database {db_name}. Error: {e}")
 
-    logger.info("Daily Task Plugin Started")
+    logger.success("Daily Task Plugin Started")
 
 
 # daily -- 简单介绍一下插件信息
@@ -124,7 +124,7 @@ async def handle_daily_command():
 
 # daily.add -- 向数据库中添加任务
 @daily_add.handle()
-async def add_task(event: Event, args: Message = CommandArg()):
+async def add_task(bot: OneBot, event: Event, args: Message = CommandArg()):
     global db
     user_id = event.get_user_id()  # 用户id
     job = args.extract_plain_text()  # 任务信息
@@ -147,16 +147,16 @@ async def add_task(event: Event, args: Message = CommandArg()):
                               .format(user_id, job, start_date))
         await daily_add.send(msg)
         # 更新‘Status’数据库
-        await update_status_add(uid=user_id)
+        await update_status_add(bot=bot, uid=user_id)
     else:
         await daily_add.finish("请在命令后加上要添加的任务..")
 
 
 # 查询'Task'数据库中的任务
-async def query_task(user_id: str, **kwargs):
+async def query_task(uid: str, **kwargs):
     """查询指定user的任务"""
     # 必需参数: user_id  可选参数: task, start_date, end_date(不为None --> 查询)
-    query = Query().user_id == user_id
+    query = Query().user_id == uid
     for k, v in kwargs.items():
         query &= Query()[k] == v
     tasks = db.table('Task').search(query)
@@ -164,10 +164,10 @@ async def query_task(user_id: str, **kwargs):
 
 
 # 查询'Status'数据库中的任务
-async def query_status(user_id: str, **kwargs):
+async def query_status(uid: str, **kwargs):
     """查询指定user的任务"""
     # 必需参数: user_id  可选参数: task, date, status
-    query = Query().user_id == user_id
+    query = Query().user_id == uid
     for k, v in kwargs.items():
         query &= Query()[k] == v
     tasks = db.table('Status').search(query)
@@ -175,7 +175,7 @@ async def query_status(user_id: str, **kwargs):
 
 
 @daily_finish.handle()
-async def update_status_finish(event: Event, args: Message = CommandArg()):
+async def update_status_finish(bot: OneBot, event: Event, args: Message = CommandArg()):
     """完成指定用户的指定任务  -- Task & Status"""
     text = args.extract_plain_text().strip().split()
     # 长度不为2 或者 第二个参数不为数字
@@ -189,26 +189,26 @@ async def update_status_finish(event: Event, args: Message = CommandArg()):
     status = text[0]  # 完成情况
 
     # 获取指定index的任务信息
-    task_info = await query_task_by_id(user_id=user_id, index=index)
+    task_info = await query_task_by_id(uid=user_id, index=index)
 
     today = datetime.date.today().isoformat()  # 今日
     if status == 'f':  # 任务完成 --> Task: end_date = today
-        tasks = await query_task(user_id=user_id, task=task_info)
+        tasks = await query_task(uid=user_id, task=task_info)
         for task in tasks:
             db.table('Task').update({'end_date': today}, doc_ids=[task.doc_id])
 
     # 今日完成情况 -- status == t (不论status, 都要更改)
-    tasks = await query_status(user_id=user_id, task=task_info, date=today)
+    tasks = await query_status(uid=user_id, task=task_info, date=today)
 
     for task in tasks:
         db.table('Status').update({'status': True}, doc_ids=[task.doc_id])  # 更新任务信息
 
     await daily_finish.send("任务状态已更新")
-    await query_today_task_status(user_id=user_id)
+    await query_today_task_status(bot=bot, uid=user_id)
 
     if status == 'f':
         await daily_finish.send("剩余任务:")
-        await query_user_tasks(user_id=user_id)
+        await query_user_tasks(bot=bot, uid=user_id)
 
 
 @daily_del.handle()
@@ -222,27 +222,27 @@ async def update_status_del(event: Event, args: Message = CommandArg()):
     index = int(text[0]) - 1  # 任务序号
 
     # 找出对应的任务
-    task_info = await query_task_by_id(user_id=user_id, index=index)
+    task_info = await query_task_by_id(uid=user_id, index=index)
 
     # 更新'Status'数据库
-    tasks = await query_status(user_id=user_id, task=task_info)
+    tasks = await query_status(uid=user_id, task=task_info)
     for task in tasks:
         db.table('Status').remove(doc_ids=[task.doc_id])
 
     # 更新'Task'数据库
-    tasks = await query_task(user_id=user_id, task=task_info)
+    tasks = await query_task(uid=user_id, task=task_info)
     for task in tasks:
         db.table('Task').remove(doc_ids=[task.doc_id])
     await daily_del.send("任务已删除")
 
 
 # 根据job_id返回今日任务信息
-async def query_task_by_id(user_id: str, index: int):
+async def query_task_by_id(uid: str, index: int):
     """查询指定user的任务"""
     # 必需参数: user_id  可选参数: task, start_date, end_date(不为None --> 查询)
     today = datetime.date.today().isoformat()  # 今日
 
-    tasks = await query_status(user_id=user_id, date=today)  # 获取当前用户的所有任务
+    tasks = await query_status(uid=uid, date=today)  # 获取当前用户的所有任务
     if len(tasks) > index:  # 如果存在指定index的任务
         task_info = tasks[index].get('task')  # 获取指定index的任务信息
     else:
@@ -251,7 +251,7 @@ async def query_task_by_id(user_id: str, index: int):
 
 
 @daily_modify.handle()
-async def update_status_modify(event: Event, args: Message = CommandArg()):
+async def update_status_modify(bot: OneBot, event: Event, args: Message = CommandArg()):
     """修改指定用户的指定任务  -- Task & Status"""
     text = args.extract_plain_text().strip().split()
     # 长度不为2 或者 第一个参数不为数字
@@ -269,9 +269,9 @@ async def update_status_modify(event: Event, args: Message = CommandArg()):
     1.2 获取指定index的旧任务信息
     1.3 更新任务信息
     """
-    task_info = await query_task_by_id(user_id=user_id, index=index)  # 获取指定index的任务信息
+    task_info = await query_task_by_id(uid=user_id, index=index)  # 获取指定index的任务信息
 
-    tasks = await query_task(user_id=user_id, task=task_info)  # 获取当前用户的所有任务
+    tasks = await query_task(uid=user_id, task=task_info)  # 获取当前用户的所有任务
     for task in tasks:
         db.table('Task').update({'task': new_job}, doc_ids=[task.doc_id])  # 更新任务信息
 
@@ -280,16 +280,16 @@ async def update_status_modify(event: Event, args: Message = CommandArg()):
     2.1 查询当前用户的所有任务
     2.2 更新任务信息
     """
-    tasks = await query_status(user_id=user_id, task=task_info)  # 获取当前用户的所有任务
+    tasks = await query_status(uid=user_id, task=task_info)  # 获取当前用户的所有任务
     for task in tasks:
         db.table('Status').update({'task': new_job}, doc_ids=[task.doc_id])  # 更新任务信息
 
     await daily_modify.send("任务修改成功")
-    await query_user_tasks(user_id=user_id)
+    await query_user_tasks(bot=bot, uid=user_id)
 
 
 # 'Status' 数据库更新: 1. 每天定时更新  2. 用户操作(add)
-async def update_status_add(uid: Optional[str] = None):
+async def update_status_add(bot: OneBot, uid: Optional[str] = None):
     """
     每天定时查询'Task'数据库, 并更新'Status'
     """
@@ -305,7 +305,7 @@ async def update_status_add(uid: Optional[str] = None):
         job = task['task']  # Task info
         # job_id = task['task_id']  # Task info
 
-        existing_status = await query_status(user_id=user_id, task=job, date=today)
+        existing_status = await query_status(uid=user_id, task=job, date=today)
 
         if not existing_status:
             db.table('Status').insert({
@@ -316,50 +316,50 @@ async def update_status_add(uid: Optional[str] = None):
                 'status': False
             })
     if uid:  # 如果更新指定user, 向user发送消息
-        await query_today_task_status(user_id=uid)
+        await query_today_task_status(bot=bot, uid=uid)
 
 
 @daily_query.handle()
-async def query_info(event: Event, args: Message = CommandArg()):
+async def query_info(bot: OneBot, event: Event, args: Message = CommandArg()):
     """
     查询任务
     """
     user_id = event.get_user_id()  # 用户id
     if detail := args.extract_plain_text():
         if "status" in detail:
-            await query_today_task_status(user_id=user_id)
+            await query_today_task_status(bot=bot, uid=user_id)
         else:
-            await query_user_tasks(user_id=user_id)
+            await query_user_tasks(bot=bot, uid=user_id)
     else:
         await daily_query.send("请在命令后指定查询内容: status / task")
 
 
 # daily.query -- 查询当日完成情况
-async def query_today_task_status(user_id: str):
+async def query_today_task_status(bot: OneBot, uid: str):
     """
     查询指定user的今日任务完成状况
     """
-    bot = OneBot(self_id=str(cfg.daily_task_bot_id))
-    user_info = await bot.call_api('get_stranger_info', user_id=user_id)
+    user_info = await bot.call_api('get_stranger_info', user_id=uid)
     today = datetime.date.today().isoformat()
-    if user_id:  # 如果更新指定user, 向user发送消息
-        tasks = await query_status(user_id=user_id, date=today)
+    if uid:  # 如果更新指定user, 向user发送消息
+        tasks = await query_status(uid=uid, date=today)
         msg = f"{user_info['nickname']} 当天任务完成情况:\n"
         for i, task in enumerate(tasks):
             msg += f"{i + 1}. {task['task']} [{'√' if task['status'] else '×'}]\n"
-        await bot.send_private_msg(user_id=user_id, message=msg)
+        await bot.send_private_msg(user_id=uid, message=msg)
     else:
         await daily_query.send("未指定User")
 
 
 # # daily.query -- 查询用户任务
-async def query_user_tasks(user_id: str):
+async def query_user_tasks(bot: OneBot, uid: str):
     """
     查询指定user的任务
     """
-    if user_id:  # 如果更新指定user, 向user发送消息
-        tasks = await query_task(user_id=user_id, end_date='None')
-        msg = f"User: {user_id} 当前任务情况:\n"
+    user_info = await bot.call_api('get_stranger_info', user_id=uid)
+    if uid:  # 如果更新指定user, 向user发送消息
+        tasks = await query_task(uid=uid, end_date='None')
+        msg = f"User: {user_info['nickname']} 当前任务情况:\n"
         for i, task in enumerate(tasks):
             msg += f"{i + 1}. {task['task']} [{task['start_date']}]\n"
         await daily_query.send(msg)
@@ -368,25 +368,11 @@ async def query_user_tasks(user_id: str):
 
 
 @daily_start.handle()
-async def start_task(event: Event):
+async def start_task(bot: OneBot):
     """启动定时任务"""
     cfg.daily_task_enabled = True
     if not scheduler.get_jobs():
-        await _init_db()
-        start_h, end_h = cfg.daily_task_start_hour, cfg.daily_task_end_hour
-        interval_h = cfg.daily_task_interval_hour
-        # 创建两个定时任务： 每日0点更新任务状态 & 每日10-22点每分钟提醒
-        scheduler.add_job(update_status_add, "cron", hour=0)
-        # scheduler.add_job(update_status_add, "cron", hour=f"{start_h}-{end_h}/{interval_h}"
-        #                   , minute='*')
-        # 查询那些数据库存在未完成任务的用户
-        user_ids = set([user['user_id'] for user in db.table('Task').search(Query().end_date == "None")])
-        for user_id in set(user_ids):
-            # 每分钟提醒
-            # 每分钟提醒
-
-            scheduler.add_job(query_today_task_status, "cron", hour=f"{start_h}-{end_h}/{interval_h}"
-                              , minute='0', args=[user_id], id=user_id)
+        await send_init_msg(bot)
     await daily_start.finish("定时任务已启动")
 
 
@@ -396,3 +382,21 @@ async def stop_task(event: Event):
     cfg.daily_task_enabled = False
     scheduler.remove_all_jobs()
     await daily_stop.finish("定时任务已停止")
+
+
+@driver.on_bot_connect
+async def send_init_msg(bot: OneBot):
+    await _init_db()
+    start_h, end_h = cfg.daily_task_start_hour, cfg.daily_task_end_hour
+    interval_h = cfg.daily_task_interval_hour
+    # 创建两个定时任务： 每日0点更新任务状态 & 每日10-22点每分钟提醒
+    scheduler.add_job(update_status_add, "cron", hour=0, args=[bot])
+    # scheduler.add_job(update_status_add, "cron", hour=f"{start_h}-{end_h}/{interval_h}"
+    #                   , minute='*')
+    # 查询那些数据库存在未完成任务的用户
+    user_ids = set([user['user_id'] for user in db.table('Task').search(Query().end_date == "None")])
+    for user_id in set(user_ids):
+        # 定时提醒
+        scheduler.add_job(query_today_task_status, "cron", hour=f"{start_h}-{end_h}/{interval_h}"
+                          , minute='0', args=[bot, user_id], id=user_id)
+    logger.success("Daily Task Plugin Init Successfully!")
