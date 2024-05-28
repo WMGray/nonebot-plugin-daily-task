@@ -1,4 +1,3 @@
-import nonebot
 from nonebot import require
 
 from nonebot_plugin_apscheduler import scheduler
@@ -17,6 +16,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.permission import SUPERUSER
 
 from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot.adapters.onebot.v11 import Bot as OneBot
 from nonebot import CommandGroup
 
 from .config import Config
@@ -339,7 +339,7 @@ async def query_today_task_status(user_id: str):
     """
     查询指定user的今日任务完成状况
     """
-    bot = nonebot.get_bot(str(cfg.daily_task_bot_id))
+    bot = OneBot(self_id=str(cfg.daily_task_bot_id))
     user_info = await bot.call_api('get_stranger_info', user_id=user_id)
     today = datetime.date.today().isoformat()
     if user_id:  # 如果更新指定user, 向user发送消息
@@ -371,21 +371,22 @@ async def query_user_tasks(user_id: str):
 async def start_task(event: Event):
     """启动定时任务"""
     cfg.daily_task_enabled = True
-    await _init_db()
-    start_h, end_h = cfg.daily_task_start_hour, cfg.daily_task_end_hour
-    interval_h = cfg.daily_task_interval_hour
-    # 创建两个定时任务： 每日0点更新任务状态 & 每日10-22点每分钟提醒
-    scheduler.add_job(update_status_add, "cron", hour=0)
-    # scheduler.add_job(update_status_add, "cron", hour=f"{start_h}-{end_h}/{interval_h}"
-    #                   , minute='*')
-    # 查询那些数据库存在未完成任务的用户
-    user_ids = set([user['user_id'] for user in db.table('Task').search(Query().end_date == "None")])
-    for user_id in set(user_ids):
-        # 每分钟提醒
-        # 每分钟提醒
+    if not scheduler.get_jobs():
+        await _init_db()
+        start_h, end_h = cfg.daily_task_start_hour, cfg.daily_task_end_hour
+        interval_h = cfg.daily_task_interval_hour
+        # 创建两个定时任务： 每日0点更新任务状态 & 每日10-22点每分钟提醒
+        scheduler.add_job(update_status_add, "cron", hour=0)
+        # scheduler.add_job(update_status_add, "cron", hour=f"{start_h}-{end_h}/{interval_h}"
+        #                   , minute='*')
+        # 查询那些数据库存在未完成任务的用户
+        user_ids = set([user['user_id'] for user in db.table('Task').search(Query().end_date == "None")])
+        for user_id in set(user_ids):
+            # 每分钟提醒
+            # 每分钟提醒
 
-        scheduler.add_job(query_today_task_status, "cron", hour=f"{start_h}-{end_h}"
-                          , minute='*', args=[user_id], id=user_id)
+            scheduler.add_job(query_today_task_status, "cron", hour=f"{start_h}-{end_h}/{interval_h}"
+                              , minute='0', args=[user_id], id=user_id)
     await daily_start.finish("定时任务已启动")
 
 
