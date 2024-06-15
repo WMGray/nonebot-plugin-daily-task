@@ -1,8 +1,8 @@
 from nonebot import require
 
+require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
-require("nonebot_plugin_apscheduler")
 from nonebot.log import logger
 import datetime
 from pathlib import Path
