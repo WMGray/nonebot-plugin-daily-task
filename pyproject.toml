@@ -1,6 +1,6 @@
 [project]
 name = "nonebot_plugin_daily_task"
-version = "0.1.10"
+version = "0.1.11"
 description = "Default template for PDM package"
 authors = [
     { name = "WMGray", email = "1466787434@qq.com" },
