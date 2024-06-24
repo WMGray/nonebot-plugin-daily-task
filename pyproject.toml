@@ -1,6 +1,6 @@
 [project]
 name = "nonebot_plugin_daily_task"
-version = "0.1.13"
+version = "0.1.14"
 description = "适用于NoneBot2的每日提醒小助手"
 authors = [
     { name = "WMGray", email = "1466787434@qq.com" },
@@ -14,7 +14,7 @@ dependencies = [
     "tinydb>=4.8.0",
     "httpx>=0.27.0",
 ]
-requires-python = ">=3.10, <3.11"
+requires-python = ">=3.10, <4.0"
 readme = "README.md"
 license = { text = "MIT" }
 

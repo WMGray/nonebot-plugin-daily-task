@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator
 
 
 class Config(BaseModel):
-    daily_task_bot_id: str = "1038878776"
+    daily_task_bot_id: str = "123456789"
     daily_task_db_name: str = "daily"
     daily_task_start_hour: int = 0
     daily_task_end_hour: int = 23
