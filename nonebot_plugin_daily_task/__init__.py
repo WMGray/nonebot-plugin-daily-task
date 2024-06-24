@@ -1,11 +1,12 @@
 from nonebot import require
 
 require("nonebot_plugin_apscheduler")
+require("nonebot_plugin_localstore")
+import nonebot_plugin_localstore as store
 from nonebot_plugin_apscheduler import scheduler
 
 from nonebot.log import logger
 import datetime
-from pathlib import Path
 from tinydb import TinyDB, Query
 from typing import Optional
 from nonebot import get_driver, get_plugin_config
@@ -75,8 +76,10 @@ async def _init_db():
     try:
         if hasattr(cfg, 'daily_task_db_name'):
             db_name = cfg.daily_task_db_name  # 数据库名字
-            base_dir = Path(__file__).parent  # 当前插件路径
-            db_path = base_dir / f'{db_name}.json'
+            # 获取插件数据目录
+            data_dir = store.get_data_dir("nonebot_plugin_daily_task")
+            db_path = data_dir / f'{db_name}.json'
+            logger.info(f"Database Path: {db_path}")
             db = TinyDB(db_path)  # 创建/加载数据库
             logger.success(f"Load Database {db_name} Successfully!")
         else:
@@ -110,7 +113,6 @@ async def handle_daily_command():
     删除任务: del、 delete、 删除
     查询任务: query、 查询
     """
-    # 构建帮助信息
     message = MessageSegment.text("添加任务: daily.add/a\n"
                                   "删除任务: daily.del/d\n"
                                   "完成任务: daily.finish/f\n"
