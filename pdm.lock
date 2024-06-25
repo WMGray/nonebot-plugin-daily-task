@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:ded337e23c5e70e35dade9807a24497cffb92d1bb284ffa40873112520518b64"
+content_hash = "sha256:f5bebafe53d1e5ea2571bbf9dd84520a8ec2c20befe58fff9860f8f123c825ef"
 
 [[package]]
 name = "annotated-types"
@@ -750,7 +750,7 @@ name = "tinydb"
 version = "4.8.0"
 requires_python = ">=3.7,<4.0"
 summary = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
-groups = ["dev"]
+groups = ["default"]
 files = [
     {file = "tinydb-4.8.0-py3-none-any.whl", hash = "sha256:30c06d12383d7c332e404ca6a6103fb2b32cbf25712689648c39d9a6bd34bd3d"},
     {file = "tinydb-4.8.0.tar.gz", hash = "sha256:6dd686a9c5a75dfa9280088fd79a419aefe19cd7f4bd85eba203540ef856d564"},
