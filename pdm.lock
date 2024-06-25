@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:f5bebafe53d1e5ea2571bbf9dd84520a8ec2c20befe58fff9860f8f123c825ef"
+content_hash = "sha256:57b4448538ff624586be6a1384c458211ae3de632783fe7562d7a2e08f8fa206"
 
 [[package]]
 name = "annotated-types"
@@ -349,7 +349,7 @@ name = "msgpack"
 version = "1.0.8"
 requires_python = ">=3.8"
 summary = "MessagePack serializer"
-groups = ["dev"]
+groups = ["default"]
 files = [
     {file = "msgpack-1.0.8-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:505fe3d03856ac7d215dbe005414bc28505d26f0c128906037e66d98c4e95868"},
     {file = "msgpack-1.0.8-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:e6b7842518a63a9f17107eb176320960ec095a8ee3b4420b5f688e24bf50c53c"},
@@ -396,7 +396,7 @@ name = "nonebot-adapter-onebot"
 version = "2.4.3"
 requires_python = ">=3.8,<4.0"
 summary = "OneBot(CQHTTP) adapter for nonebot2"
-groups = ["dev"]
+groups = ["default"]
 dependencies = [
     "msgpack<2.0.0,>=1.0.3",
     "nonebot2<3.0.0,>=2.2.0",
